@@ -1,0 +1,83 @@
+name: CI
+
+# Three independent jobs, so a PR reports three separate status checks and you
+# can see at a glance whether a failure is style, types, or behaviour.
+#
+# There are deliberately no `paths-ignore` filters. A required status check that
+# is filtered out sits in permanent "Expected - waiting for status" limbo on any
+# PR that does not touch those paths, which blocks the merge.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same branch instead of paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: ruff check
+        run: ruff check .
+      - name: ruff format
+        run: ruff format --check .
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: mypy
+        # Paths come from `files` in pyproject.toml.
+        run: mypy
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history, so diff-cover has the base branch to diff against.
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: pytest
+        # Options, including the overall coverage gate, come from pyproject.toml.
+        run: pytest
+      # The diff gate lives in this job, not its own, so turning it off is a
+      # pyproject.toml edit and never a branch-protection change. On push to
+      # main there is no diff, so only the overall gate applies.
+      - name: diff-cover
+        if: github.event_name == 'pull_request'
+        # Threshold comes from [tool.diff_cover] in pyproject.toml.
+        run: >-
+          diff-cover coverage.xml --config-file pyproject.toml
+          --compare-branch=origin/${{ github.base_ref }}

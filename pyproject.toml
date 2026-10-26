@@ -1,0 +1,108 @@
+# Tool configuration only.
+#
+# This file deliberately has no [project] table: the repo is a service, not a
+# distributable package. Runtime dependencies live in requirements.txt and the
+# import path is handled by pytest's `pythonpath` (below) plus a documented
+# PYTHONPATH for running the app. See docs/architecture.md for the rationale.
+
+# --------------------------------------------------------------------------- #
+# ruff - linting and formatting
+# --------------------------------------------------------------------------- #
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+# HARD ALLOWLIST of file types ruff may touch. Do not widen this.
+#
+# Ruff's default `include` is broader than it looks: it picks up `*.ipynb` and,
+# as of 0.16, `*.md` - where `ruff format` rewrites embedded Python code blocks.
+# That would mean a formatter silently editing notebooks and documentation, which
+# this repo does not allow. Narrowing `include` is what actually prevents it;
+# excluding directories by name does not, because these file types can live
+# anywhere.
+#
+# pyproject.toml is included because some RUF rules lint it.
+include = ["*.py", "*.pyi", "**/pyproject.toml"]
+
+# Defence in depth: also skip any stray .py file in the exploratory directories.
+extend-exclude = ["notebooks", "data"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort - import ordering
+    "N",   # pep8-naming
+    "UP",  # pyupgrade - modern syntax for the target version
+    "B",   # flake8-bugbear - likely bugs
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
+    "ARG", # flake8-unused-arguments
+    "PTH", # flake8-use-pathlib
+    "RUF", # ruff-specific rules
+]
+# Docstring rules (D) are intentionally not enabled: too much friction for a
+# starting point. Turn them on per repo once the team wants them.
+
+[tool.ruff.lint.per-file-ignores]
+# Fixtures are frequently accepted for their side effects and never read.
+"tests/**" = ["ARG"]
+
+# --------------------------------------------------------------------------- #
+# mypy - static type checking
+# --------------------------------------------------------------------------- #
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+# Required so `app` resolves without installing the project.
+mypy_path = "src"
+explicit_package_bases = true
+warn_unreachable = true
+# Belt and braces: mypy is already scoped by `files`, but never wander here.
+exclude = ["^notebooks/", "^data/"]
+
+# --------------------------------------------------------------------------- #
+# pytest
+# --------------------------------------------------------------------------- #
+[tool.pytest.ini_options]
+minversion = "8.0"
+# This is what makes `from app... import` work in tests with a src layout and
+# no editable install.
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q --cov=app --cov-report=term-missing --cov-report=xml"
+# coverage.xml is what diff-cover reads. Do not add --cov-fail-under here: it
+# overrides fail_under in [tool.coverage.report] below.
+
+# --------------------------------------------------------------------------- #
+# coverage
+# --------------------------------------------------------------------------- #
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+# Overall gate: pytest fails if total coverage drops below this. With
+# `branch = true` the total counts branches as well as lines. Set to 0 to turn
+# the gate off (the report still prints). Never lower it just to get a PR to
+# pass; if you loosen it, say why in the same edit. See AGENTS.md.
+fail_under = 80
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    'if __name__ == "__main__":',
+]
+
+# --------------------------------------------------------------------------- #
+# diff-cover
+# --------------------------------------------------------------------------- #
+[tool.diff_cover]
+# Diff gate: lines a PR adds or changes must be at least this covered. CI runs
+# it on pull requests only and passes --compare-branch with the PR's real base,
+# which overrides compare_branch below. Set fail_under to 0 to turn the gate off
+# (it still reports, but never fails). Never lower it just to get a PR to pass;
+# if you loosen it, say why in the same edit. See AGENTS.md.
+compare_branch = "origin/main"
+fail_under = 90

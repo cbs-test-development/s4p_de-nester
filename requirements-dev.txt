@@ -1,0 +1,24 @@
+# Development and CI dependencies.
+#
+# Hand-maintained and fully pinned with `==`. Installing this file also
+# installs everything in requirements.txt, so local setup and CI need only:
+#
+#   pip install -r requirements-dev.txt
+#
+# These tools are the whole story. There are no git hooks, so nothing runs
+# them for you: you run them yourself before committing or pushing, and CI runs
+# them on every push and PR. See "Before you commit or push" in AGENTS.md.
+
+-r requirements.txt
+
+# Linting and formatting
+ruff==0.16.0
+
+# Static type checking
+mypy==2.3.0
+
+# Testing
+pytest==9.1.1
+pytest-cov==7.1.0
+# Coverage of the lines a PR changes; the diff gate in CI.
+diff-cover==10.6.0

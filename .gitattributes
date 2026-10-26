@@ -1,0 +1,39 @@
+# Line-ending and diff behaviour.
+#
+# Later rules win, so the order of the blocks below matters.
+
+# Default: detect text files and normalise them to LF in the repository.
+* text=auto
+
+# Notebooks are committed with their outputs. Pinning them to LF stops Windows
+# checkouts from rewriting every line and producing unreadable diffs.
+*.ipynb text eol=lf
+
+# Keep shell scripts LF so they stay executable on Linux CI runners.
+*.sh text eol=lf
+
+# Datasets are preserved byte-for-byte: git performs no line-ending conversion
+# anywhere under data/. A CSV exported from Excel keeps its CRLF, and a checksum
+# taken before committing still matches after a fresh clone on another platform.
+data/** -text
+
+# Known binary formats. `binary` is shorthand for `-text -diff`: no line-ending
+# conversion and no attempt to diff them as text.
+#
+# This block sits after `data/** -text` on purpose - `-text` alone would leave
+# git trying to produce a text diff for a PNG that happens to live in data/.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.xls binary
+*.parquet binary
+*.pkl binary
+*.npy binary
+*.npz binary
+*.zip binary
+*.gz binary
+*.7z binary

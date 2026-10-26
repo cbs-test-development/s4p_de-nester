@@ -1,0 +1,8 @@
+# Runtime dependencies.
+#
+# Hand-maintained and fully pinned with `==`. There is no lockfile and no
+# pip-compile step: add a line, pin the exact version, and note why in the PR.
+# Development and CI tooling belongs in requirements-dev.txt, not here.
+
+# Reads .env into the environment - see src/app/config.py
+python-dotenv==1.2.2
