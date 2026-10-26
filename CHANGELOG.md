@@ -20,6 +20,10 @@ nothing in the repo enforces one.
 
 ### Added
 
+- Standalone Windows executable: `python scripts/build_exe.py` builds
+  `dist/S4P-De-nester.exe`, which runs without a Python install. PyInstaller is
+  now in `requirements-dev.txt`; re-run `pip install -r requirements-dev.txt`.
+  See `docs/packaging.md`.
 - S4P De-nester: run `python -m app.main` (with `PYTHONPATH=src`) to open a
   window that copies nested S4P files into one folder, renamed as
   `<switch/GPU>_Leg_<LegLocation>_<original filename>.s4p`, and writes

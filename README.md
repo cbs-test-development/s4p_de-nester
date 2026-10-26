@@ -20,6 +20,9 @@ PYTHONPATH=src python -m app.main
 This opens a window: pick the leg map CSV, the S4P root folder and an output
 folder, then press **Run**.
 
+To build a standalone `S4P-De-nester.exe` that needs no Python install, run
+`python scripts/build_exe.py`. See [docs/packaging.md](docs/packaging.md).
+
 ## Check
 
 ```bash
@@ -77,5 +80,6 @@ Details in [AGENTS.md](AGENTS.md).
 | [docs/onboarding.md](docs/onboarding.md) | Setup, running, testing. |
 | [docs/architecture.md](docs/architecture.md) | Design and trade-offs. |
 | [docs/denest/README.md](docs/denest/README.md) | What the de-nester does, its inputs and outputs. |
+| [docs/packaging.md](docs/packaging.md) | Building the Windows executable. |
 | [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md) | Branch Protection setup guide. |
 | [CHANGELOG.md](CHANGELOG.md) | Hand-maintained release history. |
