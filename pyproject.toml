@@ -81,6 +81,10 @@ addopts = "-q --cov=app --cov-report=term-missing --cov-report=xml"
 # --------------------------------------------------------------------------- #
 [tool.coverage.run]
 branch = true
+# The Tkinter window cannot be exercised without a display, and CI has none.
+# It is kept to UI wiring only; everything it calls is tested. Do not add
+# logic to it - move it into another app.denest module, where it counts.
+omit = ["*/app/denest/gui.py"]
 
 [tool.coverage.report]
 show_missing = true

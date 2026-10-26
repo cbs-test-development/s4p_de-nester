@@ -20,6 +20,17 @@ nothing in the repo enforces one.
 
 ### Added
 
+- S4P De-nester: run `python -m app.main` (with `PYTHONPATH=src`) to open a
+  window that copies nested S4P files into one folder, renamed as
+  `<switch/GPU>_Leg_<LegLocation>_<original filename>.s4p`, and writes
+  `<leg map>_filtered.csv` with one row per copied file. See
+  `docs/denest/README.md`. Compared with the original `denest_s4p.py` script:
+  - Choosing an output folder that contains the S4P root no longer causes every
+    file to be skipped.
+  - Destination names that differ only in case now get a `_2` suffix instead of
+    overwriting each other on Windows.
+  - When a serial is repeated in the leg map, its files are ordered by the
+    first row's position (the row whose data is used), not the last.
 - Coverage is now enforced: 90% on changed lines in pull requests, 80% overall.
   Turn off either gate by setting its `fail_under` to 0 in `pyproject.toml`.
   Run `diff-cover coverage.xml --config-file pyproject.toml` after `pytest` to

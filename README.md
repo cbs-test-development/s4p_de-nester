@@ -1,6 +1,24 @@
-# Python Service Template
+# S4P De-nester
 
-Starting point for Python services. Click **Use this template**. You are recommended to override the README with your own.
+Copies S4P files out of a nested folder tree into one flat folder, renamed as
+`<switch/GPU>_Leg_<LegLocation>_<original filename>.s4p`, and writes a leg map
+filtered to the serials that have files. Full behaviour:
+[docs/denest/README.md](docs/denest/README.md).
+
+## Run
+
+Inside the project virtual environment (see [docs/onboarding.md](docs/onboarding.md)):
+
+```powershell
+$env:PYTHONPATH="src"; python -m app.main
+```
+
+```bash
+PYTHONPATH=src python -m app.main
+```
+
+This opens a window: pick the leg map CSV, the S4P root folder and an output
+folder, then press **Run**.
 
 ## Check
 
@@ -58,5 +76,6 @@ Details in [AGENTS.md](AGENTS.md).
 | [AGENTS.md](AGENTS.md) | Coding standards. |
 | [docs/onboarding.md](docs/onboarding.md) | Setup, running, testing. |
 | [docs/architecture.md](docs/architecture.md) | Design and trade-offs. |
+| [docs/denest/README.md](docs/denest/README.md) | What the de-nester does, its inputs and outputs. |
 | [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md) | Branch Protection setup guide. |
 | [CHANGELOG.md](CHANGELOG.md) | Hand-maintained release history. |

@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 DEFAULT_ENV_FILE = Path(".env")
 
-DEFAULT_APP_NAME = "python-service-template"
+DEFAULT_APP_NAME = "s4p-de-nester"
 DEFAULT_APP_ENV = "local"
 DEFAULT_LOG_LEVEL = "INFO"
 

@@ -12,8 +12,9 @@
 
 | Component | Responsibility | Depends on |
 | --- | --- | --- |
-| `src/app/main.py` | Entrypoint. Wiring only. | `app.config` |
+| `src/app/main.py` | Entrypoint. Wiring only: loads settings, configures logging, opens the GUI. | `app.config`, `app.denest.gui` |
 | `src/app/config.py` | Reads the environment into `Settings`. | `python-dotenv` |
+| `src/app/denest/` | Flattens nested S4P files and writes a filtered leg map. See [denest/README.md](denest/README.md). | standard library only (`tkinter` for the GUI) |
 
 ## Data flow
 
